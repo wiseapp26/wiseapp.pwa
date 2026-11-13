@@ -1,0 +1,14 @@
+WIS€ — version PWA (à héberger sur GitHub Pages)
+
+Fichiers à mettre À LA RACINE d'un dépôt GitHub public (pas dans un sous-dossier) :
+  index.html, sw.js, manifest.webmanifest,
+  icon-192.png, icon-512.png, icon-maskable-512.png, apple-touch-icon.png
+
+Puis : Settings -> Pages -> Branch "main" / "(root)" -> Save.
+Lien final : https://TON-NOM-UTILISATEUR.github.io/NOM-DU-DEPOT/
+
+Installer sur iPhone : ouvrir le lien dans SAFARI -> bouton Partager -> "Sur l'écran d'accueil".
+Installer sur Android : Chrome propose "Installer l'application".
+
+Mise à jour : remplacer index.html (même nom) dans le dépôt. L'appli se met à jour
+toute seule à l'ouverture suivante quand il y a du réseau.
