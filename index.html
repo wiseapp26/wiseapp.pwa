@@ -270,6 +270,9 @@
   .exp-row{ display:flex; justify-content:space-between; align-items:center; background:var(--card); border:1px solid var(--border); border-left:3px solid var(--border); border-radius:12px; padding:11px 14px; margin-bottom:8px; }
   .exp-row.income{ border-left-color:var(--accent); }
   .exp-row.expense{ border-left-color:var(--danger); }
+  .exp-row.saved{ border-left-color:var(--c3); }
+  .exp-row.saved .amt{ color:var(--c3); }
+  .amt.saved{ color:var(--c3); }
   .exp-row .info{ min-width:0; }
   .exp-row .lbl{ font-size:0.88rem; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .exp-row .date{ font-family:var(--font-mono); font-size:0.68rem; color:var(--text-mute); margin-top:2px; }
@@ -494,6 +497,10 @@
         <div class="amt" id="histNet">0,00 €</div>
         <div class="net-status" id="histNetStatus"></div>
       </div>
+      <div class="stat-grid" id="histSavedGrid" style="margin-top:10px; display:none;">
+        <div class="stat-box"><div class="lbl" data-i18n="lbl_saved31">Mis de côté (31j)</div><div class="amt saved" id="histSaved">0,00 €</div></div>
+        <div class="stat-box"><div class="lbl" data-i18n="lbl_free31">Reste libre (31j)</div><div class="amt" id="histFree">0,00 €</div></div>
+      </div>
     </div></div>
     <div class="block-title" data-i18n="title_recent">Mouvements récents</div>
     <div id="expList"></div>
@@ -559,7 +566,7 @@
 
     <div class="block"><div class="card">
       <div class="block-title" data-i18n="title_about">À propos</div>
-      <p class="subtitle" style="margin:0 0 6px;">WIS€ — v1.1</p>
+      <p class="subtitle" style="margin:0 0 6px;">WIS€ — v1.2</p>
 
     </div></div>
 
@@ -662,7 +669,7 @@
       goal_deadline_passed:"La date choisie est déjà passée.",
       title_add_expense:"Ajouter un mouvement", ph_expense_label:"Dépense (ex. courses)", ph_income_label:"Gain (ex. salaire)", btn_add:"Ajouter",
       type_expense:"Dépense", type_income:"Gain",
-      title_31days:"31 derniers jours", lbl_income31:"Gains (31j)", lbl_expense31:"Dépenses (31j)", lbl_net31:"Solde (31j)",
+      title_31days:"31 derniers jours", lbl_income31:"Gains (31j)", lbl_expense31:"Dépenses (31j)", lbl_net31:"Solde (31j)", lbl_saved31:"Mis de côté (31j)", lbl_free31:"Reste libre (31j)", lbl_saved_tag:"Mis de côté",
       net_positive:"Gagnant", net_negative:"Perdant", title_recent:"Mouvements récents",
       empty_expenses:"Aucune dépense enregistrée sur les 31 derniers jours.",
       title_notifications:"Notifications", lbl_notifications:"Notifications", notif_on:"Activées", notif_off:"Désactivées",
@@ -673,7 +680,7 @@
       title_help:"Aide",
       help_home_title:"Répartition", help_home_text:"Indique tout ce que tu possèdes, choisis dixièmes ou pourcentages, puis choisis une combinaison de chiffres qui donne 10 ou 100. Donne un nom à chaque part pour voir comment répartir ton argent — l'idée est de le répartir selon tes dépenses et selon leur importance.",
       help_goal_title:"Objectifs", help_goal_text:"Crée un ou plusieurs objectifs d'épargne avec un montant et une date précise. L'appli calcule combien mettre de côté par mois, par semaine et par jour. Un objectif atteint est marqué automatiquement comme accompli.",
-      help_history_title:"Historique", help_history_text:"Note tes dépenses et tes gains au jour le jour. Le graphique des 31 derniers jours affiche les gains en vert et les dépenses en rouge, avec le solde final — que tu peux ensuite associer à l'un de tes objectifs.",
+      help_history_title:"Historique", help_history_text:"Note tes dépenses et tes gains au jour le jour. Le graphique des 31 derniers jours affiche les gains en vert et les dépenses en rouge, avec le solde final — que tu peux ensuite associer à l'un de tes objectifs. L'argent que tu mets de côté pour un objectif apparaît en bleu dans la liste, et un « Reste libre » indique ce qu'il te reste après ces mises de côté.",
       help_data_title:"Tes données", help_data_text:"Tout est stocké uniquement sur cet appareil, sans compte ni connexion. Le bouton \"Réinitialiser les données\" efface définitivement tout ce que tu as enregistré.",
       title_about:"À propos", about_creator:"Créé par",
       title_data:"Données", btn_reset_data:"Réinitialiser les données", btn_reset_confirm:"Confirmer la suppression ?", confirm_reset:"Es-tu sûr de vouloir réinitialiser toutes les données ? Cette action est irréversible.",
@@ -718,7 +725,7 @@
       goal_deadline_passed:"The selected date is already in the past.",
       title_add_expense:"Add a transaction", ph_expense_label:"Expense (e.g. groceries)", ph_income_label:"Income (e.g. salary)", btn_add:"Add",
       type_expense:"Expense", type_income:"Income",
-      title_31days:"Last 31 days", lbl_income31:"Income (31d)", lbl_expense31:"Expenses (31d)", lbl_net31:"Balance (31d)",
+      title_31days:"Last 31 days", lbl_income31:"Income (31d)", lbl_expense31:"Expenses (31d)", lbl_net31:"Balance (31d)", lbl_saved31:"Set aside (31d)", lbl_free31:"Left free (31d)", lbl_saved_tag:"Set aside",
       net_positive:"Up", net_negative:"Down", title_recent:"Recent transactions",
       empty_expenses:"No expenses logged in the last 31 days.",
       title_notifications:"Notifications", lbl_notifications:"Notifications", notif_on:"On", notif_off:"Off",
@@ -729,7 +736,7 @@
       title_help:"Help",
       help_home_title:"Split", help_home_text:"Enter everything you own, choose tenths or percentages, then pick a digit combination that adds up to 10 or 100. Name each part to see how your money is split — the idea is to split it based on your expenses and how important they are.",
       help_goal_title:"Goals", help_goal_text:"Create one or several savings goals with an amount and a precise date. The app calculates how much to save per month, week and day. A goal that's reached is automatically marked as completed.",
-      help_history_title:"History", help_history_text:"Log your expenses and income day by day. The 31-day chart shows income in green and expenses in red, with the final balance — which you can then link to one of your goals.",
+      help_history_title:"History", help_history_text:"Log your expenses and income day by day. The 31-day chart shows income in green and expenses in red, with the final balance — which you can then link to one of your goals. Money you set aside for a goal shows up in blue in the list, and a “Left free” figure shows what remains after setting it aside.",
       help_data_title:"Your data", help_data_text:"Everything is stored only on this device, with no account and no connection. The \"Reset data\" button permanently erases everything you've saved.",
       title_about:"About", about_creator:"Created by",
       title_data:"Data", btn_reset_data:"Reset all data", btn_reset_confirm:"Confirm deletion?", confirm_reset:"Are you sure you want to reset all data? This cannot be undone.",
@@ -774,7 +781,7 @@
       goal_deadline_passed:"Das gewählte Datum liegt bereits in der Vergangenheit.",
       title_add_expense:"Buchung hinzufügen", ph_expense_label:"Ausgabe (z. B. Einkauf)", ph_income_label:"Einnahme (z. B. Gehalt)", btn_add:"Hinzufügen",
       type_expense:"Ausgabe", type_income:"Einnahme",
-      title_31days:"Letzte 31 Tage", lbl_income31:"Einnahmen (31T)", lbl_expense31:"Ausgaben (31T)", lbl_net31:"Saldo (31T)",
+      title_31days:"Letzte 31 Tage", lbl_income31:"Einnahmen (31T)", lbl_expense31:"Ausgaben (31T)", lbl_net31:"Saldo (31T)", lbl_saved31:"Zurückgelegt (31T)", lbl_free31:"Frei (31T)", lbl_saved_tag:"Zurückgelegt",
       net_positive:"Im Plus", net_negative:"Im Minus", title_recent:"Letzte Buchungen",
       empty_expenses:"Keine Ausgaben in den letzten 31 Tagen erfasst.",
       title_notifications:"Benachrichtigungen", lbl_notifications:"Benachrichtigungen", notif_on:"Ein", notif_off:"Aus",
@@ -785,7 +792,7 @@
       title_help:"Hilfe",
       help_home_title:"Aufteilung", help_home_text:"Gib alles an, was du besitzt, wähle Zehntel oder Prozente, und wähle dann eine Ziffernkombination, die 10 oder 100 ergibt. Benenne jeden Teil, um zu sehen, wie dein Geld aufgeteilt wird — die Idee ist, es nach deinen Ausgaben und deren Wichtigkeit aufzuteilen.",
       help_goal_title:"Ziele", help_goal_text:"Erstelle ein oder mehrere Sparziele mit einem Betrag und einem genauen Datum. Die App berechnet, wie viel du pro Monat, Woche und Tag sparen musst. Ein erreichtes Ziel wird automatisch als erreicht markiert.",
-      help_history_title:"Verlauf", help_history_text:"Erfasse deine Ausgaben und Einnahmen Tag für Tag. Das Diagramm der letzten 31 Tage zeigt Einnahmen in Grün und Ausgaben in Rot, mit dem Endsaldo — den du danach einem deiner Ziele zuordnen kannst.",
+      help_history_title:"Verlauf", help_history_text:"Erfasse deine Ausgaben und Einnahmen Tag für Tag. Das Diagramm der letzten 31 Tage zeigt Einnahmen in Grün und Ausgaben in Rot, mit dem Endsaldo — den du danach einem deiner Ziele zuordnen kannst. Geld, das du für ein Ziel zurücklegst, erscheint blau in der Liste, und „Frei“ zeigt, was danach übrig bleibt.",
       help_data_title:"Deine Daten", help_data_text:"Alles wird nur auf diesem Gerät gespeichert, ohne Konto und ohne Verbindung. Die Schaltfläche „Daten zurücksetzen\" löscht endgültig alles, was du gespeichert hast.",
       title_about:"Über uns", about_creator:"Erstellt von",
       title_data:"Daten", btn_reset_data:"Daten zurücksetzen", btn_reset_confirm:"Löschen bestätigen?", confirm_reset:"Möchtest du wirklich alle Daten zurücksetzen? Das kann nicht rückgängig gemacht werden.",
@@ -880,6 +887,9 @@
     histExpense: document.getElementById('histExpense'),
     histNet: document.getElementById('histNet'),
     histNetStatus: document.getElementById('histNetStatus'),
+    histSavedGrid: document.getElementById('histSavedGrid'),
+    histSaved: document.getElementById('histSaved'),
+    histFree: document.getElementById('histFree'),
     expList: document.getElementById('expList'),
     savingsAmount: document.getElementById('savingsAmount'),
     savingsStatus: document.getElementById('savingsStatus'),
@@ -1661,16 +1671,34 @@
     els.histNet.className = 'amt ' + (net >= 0 ? 'positive' : 'negative');
     els.histNetStatus.textContent = net >= 0 ? tr('net_positive') : tr('net_negative');
     els.histNetStatus.className = 'net-status ' + (net >= 0 ? 'win' : 'lose');
+    // Argent mis de côté pour des objectifs pendant ces 31 jours (affichage seulement :
+    // ça ne change ni le solde, ni « Gagnant/Perdant », ni le calcul de l'argent disponible).
+    const savedEntries = (state.associationLog || []).filter(a => a && a.date && dates.includes(a.date) && a.amountCents > 0);
+    const savedTotal = savedEntries.reduce((s,a) => s + a.amountCents, 0);
+    els.histSavedGrid.style.display = savedTotal > 0 ? '' : 'none';
+    els.histSaved.textContent = fmt(savedTotal);
+    const free = net - savedTotal;
+    els.histFree.textContent = (free >= 0 ? '+' : '−') + fmt(Math.abs(free));
+    els.histFree.className = 'amt ' + (free >= 0 ? 'positive' : 'negative');
     renderAssocPrompt();
 
-    const recent = [...state.expenses].filter(e => dates.includes(e.dateISO)).sort((a,b) => b.dateISO.localeCompare(a.dateISO) || b.id - a.id);
+    const recent = [...state.expenses].filter(e => dates.includes(e.dateISO)).map(e => ({ kind:'mov', dateISO:e.dateISO, id:e.id, e }));
+    savedEntries.forEach(a => recent.push({ kind:'saved', dateISO:a.date, id:a.id || 0, a }));
+    // même jour : les mises de côté d'abord (elles viennent après le gain qu'elles utilisent)
+    recent.sort((x,y) => y.dateISO.localeCompare(x.dateISO) || (x.kind === y.kind ? y.id - x.id : (x.kind === 'saved' ? -1 : 1)));
     if(recent.length === 0){
       els.expList.innerHTML = '<p class="empty">' + tr('empty_expenses') + '</p>';
     } else {
-      els.expList.innerHTML = recent.map(e => {
+      els.expList.innerHTML = recent.map(r => {
+        if(r.kind === 'saved'){
+          const [y,m,day] = r.dateISO.split('-');
+          return '<div class="exp-row saved"><div class="info"><div class="lbl">\u2192 ' + escapeHtml(r.a.goalLabel || '') + '</div><div class="date">' + day + '/' + m + '/' + y + ' \u00b7 ' + tr('lbl_saved_tag') + '</div></div>' +
+            '<div class="right"><span class="amt">' + fmt(r.a.amountCents) + '</span></div></div>';
+        }
+        const e = r.e;
         const [y,m,day] = e.dateISO.split('-');
         const isIncome = e.type === 'income';
-        const sign = isIncome ? '+' : '−';
+        const sign = isIncome ? '+' : '\u2212';
         return '<div class="exp-row ' + (isIncome ? 'income' : 'expense') + '"><div class="info"><div class="lbl">' + escapeHtml(e.label) + '</div><div class="date">' + day + '/' + m + '/' + y + '</div></div>' +
           '<div class="right"><span class="amt">' + sign + fmt(e.amountCents) + '</span><button class="del" data-id="' + e.id + '">' + tr('btn_remove') + '</button></div></div>';
       }).join('');
