@@ -10,7 +10,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="WIS€">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  /* PWA iPhone : la page passe sous la barre d'état. On peint cette zone en bleu nuit
+     pour que l'heure (en blanc) reste lisible, en mode sombre comme en mode clair. */
+  html::before{ content:''; position:fixed; top:0; left:0; right:0; height:env(safe-area-inset-top, 0px);
+    background:#0A0F1A; z-index:2000; pointer-events:none; }
+</style>
 <title>WIS€</title>
 <style>
   :root{
@@ -35,7 +41,7 @@
   body{
     margin:0;
     background: radial-gradient(1200px 500px at 50% -10%, var(--glow), transparent), linear-gradient(180deg, var(--bg-a) 0%, var(--bg-b) 55%, var(--bg-c) 100%);
-    color:var(--text); font-family:var(--font-sans); min-height:100vh; padding-bottom:calc(88px + env(safe-area-inset-bottom));
+    color:var(--text); font-family:var(--font-sans); min-height:100vh; padding-bottom:calc(108px + env(safe-area-inset-bottom));
     transition:background .25s ease, color .25s ease;
   }
   .sheet{ max-width:480px; margin:0 auto; padding:calc(32px + env(safe-area-inset-top)) calc(18px + env(safe-area-inset-right)) 20px calc(18px + env(safe-area-inset-left)); }
@@ -189,9 +195,20 @@
   .reset-btn.danger.confirming{ background:var(--danger); color:#fff; border-color:var(--danger); }
   .empty{ font-size:0.88rem; color:var(--text-mute); font-style:italic; }
 
-  .navbar{ position:fixed; left:0; right:0; bottom:0; display:flex; background:rgba(15,20,32,.92); backdrop-filter:blur(10px); border-top:1px solid var(--border); padding:8px 6px calc(8px + env(safe-area-inset-bottom)); z-index:50; }
+  /* Barre de navigation : îlot flottant, détaché des bords de l'écran */
+  .navbar{
+    position:fixed; left:50%; transform:translateX(-50%);
+    bottom:calc(12px + env(safe-area-inset-bottom));
+    width:min(420px, calc(100% - 24px));
+    display:flex; gap:2px; padding:7px;
+    background:rgba(15,20,32,.80);
+    -webkit-backdrop-filter:blur(18px) saturate(1.4); backdrop-filter:blur(18px) saturate(1.4);
+    border:1px solid var(--border); border-radius:26px;
+    box-shadow:0 14px 34px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.30);
+    z-index:50;
+  }
   .toast{
-    position:fixed; left:50%; bottom:calc(84px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px);
+    position:fixed; left:50%; bottom:calc(98px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px);
     max-width:min(420px, calc(100% - 32px)); background:var(--card-hi); border:1px solid var(--border); color:var(--text);
     padding:12px 16px; border-radius:12px; font-size:0.9rem; box-shadow:0 8px 24px rgba(0,0,0,.4); z-index:260;
     opacity:0; pointer-events:none; transition:opacity .25s ease, transform .25s ease;
@@ -207,10 +224,12 @@
   }
   .surplus-card select{ width:100%; font-size:16px; background:var(--card-hi); color:var(--text); border:1px solid var(--border); border-radius:9px; padding:9px 10px; }
   .surplus-card .btn-primary, .surplus-card .reset-btn{ width:100%; }
-  body.light .navbar{ background:rgba(255,255,255,.85); }
-  .navbar button{ flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:var(--text-mute); font-size:0.65rem; font-weight:600; cursor:pointer; padding:6px 2px; border-radius:10px; }
+  body.light .navbar{ background:rgba(255,255,255,.82); box-shadow:0 14px 30px rgba(20,30,50,.18), 0 2px 6px rgba(20,30,50,.10); }
+  .navbar button{ flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:var(--text-mute); font-size:0.65rem; font-weight:600; cursor:pointer; padding:7px 2px; border-radius:19px; transition:background .2s ease, color .2s ease; }
+  .navbar button span{ max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .navbar button svg{ width:20px; height:20px; }
-  .navbar button.active{ color:var(--accent); }
+  .navbar button.active{ color:var(--accent); background:rgba(52,211,153,.14); }
+  body.light .navbar button.active{ background:rgba(16,160,110,.12); }
 
   .tab-section{ display:none; }
   .tab-section.active{ display:block; }
