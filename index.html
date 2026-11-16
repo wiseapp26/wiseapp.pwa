@@ -1824,7 +1824,15 @@
   els.themeToggle.querySelectorAll('button').forEach(btn => {
     btn.addEventListener('click', () => { state.settings.theme = btn.dataset.theme; applyTheme(); save(); applyI18n(); });
   });
-  function applyTheme(){ document.body.classList.toggle('light', state.settings.theme === 'light'); }
+  function applyTheme(){
+    const light = state.settings.theme === 'light';
+    document.body.classList.toggle('light', light);
+    // Couleur de fond « pleine » alignée sur le thème (lue par certains systèmes : barre d'état des PWA, barre du navigateur).
+    const bg = light ? '#EFF2F7' : '#0A0F1A';
+    document.documentElement.style.backgroundColor = bg;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute('content', bg);
+  }
 
   /* ---------- PERSISTENCE ---------- */
   /* Stockage 100% local : localStorage du navigateur. Aucune donnée n'est
