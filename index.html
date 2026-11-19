@@ -85,33 +85,7 @@
   @keyframes coinspin{ from{ transform:rotateY(0deg); } to{ transform:rotateY(360deg); } }
   @media (prefers-reduced-motion: reduce){ .coin-img{ animation:none; } }
 
-  /* --- coin tap interaction: pop + drop into the jar --- */
-  .coin-click-wrap{ display:inline-flex; align-items:center; line-height:0; cursor:pointer; -webkit-tap-highlight-color:transparent; }
-  .coin-pop-out{ animation:coinPopOut .16s ease forwards; }
-  @keyframes coinPopOut{ to{ transform:scale(0) rotate(25deg); opacity:0; } }
-  .coin-pop-in{ animation:coinPopIn .3s ease forwards; }
-  @keyframes coinPopIn{ from{ transform:scale(0) rotate(-25deg); opacity:0; } to{ transform:scale(1) rotate(0deg); opacity:1; } }
-
-  .falling-coin{
-    position:fixed; width:20px; height:20px; border-radius:50%; z-index:250; pointer-events:none;
-    background:radial-gradient(circle at 32% 26%, #FFF6D8 0%, #F8DE8C 14%, #E8B84B 42%, #C0872C 74%, #7A5314 100%);
-    box-shadow:0 0 0 1.5px #8A5D18, 0 4px 10px rgba(0,0,0,.4);
-  }
-
-  .jar-card{ display:flex; flex-direction:column; align-items:center; margin-bottom:26px; }
-  .jar{ position:relative; width:96px; height:114px; }
-  .jar-glass{
-    position:absolute; inset:0; border:2px solid rgba(255,255,255,.22); border-top:none; border-radius:6px 6px 26px 26px;
-    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-    box-shadow:inset 0 0 18px rgba(255,255,255,.07), 0 10px 20px rgba(0,0,0,.25);
-  }
-  .jar-glass::before{
-    content:''; position:absolute; top:-7px; left:-2px; right:-2px; height:13px;
-    border:2px solid rgba(255,255,255,.28); border-radius:50%; background:rgba(255,255,255,.05);
-  }
-  .jar-coins{ position:absolute; left:9px; right:9px; bottom:7px; height:calc(100% - 18px); display:flex; flex-wrap:wrap-reverse; align-content:flex-start; gap:3px; overflow:hidden; }
-  .jar-coin-dot{ width:13px; height:13px; border-radius:50%; flex-shrink:0; background:radial-gradient(circle at 35% 30%, #FFF6D8, #E8B84B 60%, #9C6B1E 100%); box-shadow:0 1px 2px rgba(0,0,0,.4); }
-  .jar-count{ margin-top:8px; font-family:var(--font-mono); font-size:0.74rem; color:var(--text-mute); }
+  .coin-click-wrap{ display:inline-flex; align-items:center; line-height:0; }
   .subtitle{ font-size:0.9rem; color:var(--text-soft); max-width:50ch; line-height:1.5; margin:0; }
 
   .block{ margin-bottom:20px; }
@@ -244,6 +218,8 @@
   .card.hero .amt{ font-family:var(--font-mono); font-weight:800; font-size:2rem; letter-spacing:-0.02em; }
   .card.hero .amt.positive{ color:var(--accent); }
   .card.hero .amt.negative{ color:var(--danger); }
+  /* Les lignes de liste dans une carte principale gardent une taille normale (seul le chiffre clé est grand) */
+  .card.hero .ledger-row .amt{ font-size:1.05rem; font-weight:700; letter-spacing:0; }
   .card.quiet{ background:transparent; box-shadow:none; border-color:var(--border-soft); padding:14px 16px; }
   .card.quiet > .block-title, .card.quiet > summary.block-title{ font-size:0.86rem; font-weight:600; color:var(--text-soft); margin-bottom:8px; }
   /* Écran Historique : le solde est le chiffre principal, gains/dépenses passent au second plan */
@@ -273,11 +249,57 @@
   details.fold > summary.block-title{ margin:0; }
   details.fold[open] > summary.block-title{ margin-bottom:12px; }
   .new-goal-summary::before{ content:'+'; color:var(--accent); font-weight:800; font-size:1.1rem; line-height:1; }
-  /* Bocal : bandeau compact au lieu d'un grand bloc au-dessus de l'action principale */
-  .jar-card{ flex-direction:row; justify-content:center; align-items:center; gap:10px; margin-bottom:16px; }
-  .jar{ transform:scale(.58); transform-origin:center; margin:-24px -20px; }
-  .jar-count{ margin-top:0; font-size:0.78rem; }
 
+
+  /* --- Planificateur de budget (accueil) --- */
+  .prof-help{ font-size:0.88rem; color:var(--text-soft); line-height:1.5; margin:0 0 14px; }
+  .prof-why{ font-size:0.88rem; color:var(--text-soft); line-height:1.5; margin:12px 0 0; }
+  .prof-warn{ font-size:0.86rem; color:var(--gold); line-height:1.5; margin:10px 0 0; }
+  .prof-note{ font-size:0.74rem; color:var(--text-mute); line-height:1.45; margin:12px 0 0; }
+
+  /* ---------- Planificateur de budget (accueil) ---------- */
+  .bp-kpis{ display:grid; grid-template-columns:repeat(3, 1fr); margin:4px 0 20px; text-align:center; }
+  .bp-kpi{ padding:0 4px; }
+  .bp-kpi + .bp-kpi{ border-left:1px solid var(--border-soft); }
+  .bp-kl{ font-size:0.68rem; color:var(--text-soft); line-height:1.25; min-height:2.5em; display:flex; align-items:flex-end; justify-content:center; }
+  .bp-kv{ font-family:var(--font-mono); font-weight:700; font-size:1.05rem; margin-top:6px; color:var(--text); white-space:nowrap; }
+  .bp-kv.positive{ color:var(--accent); }
+  .bp-kv.negative{ color:var(--danger); }
+  .bp-q{ font-size:1.05rem; font-weight:650; margin:2px 0 8px; color:var(--text); }
+  .bp-field{ display:flex; align-items:center; gap:8px; background:var(--card-hi); border:1px solid var(--border); border-radius:14px; padding:2px 16px; }
+  .bp-field input{ flex:1; min-width:0; background:transparent; border:none; outline:none; color:var(--text); font-family:var(--font-mono); font-size:1.4rem; font-weight:600; padding:10px 0; }
+  .bp-field span{ color:var(--gold); font-weight:700; }
+  .bp-help{ font-size:0.8rem; color:var(--text-mute); margin:6px 2px 0; }
+  .bp-sub{ font-size:1.05rem; font-weight:650; margin:22px 0 10px; color:var(--text); }
+  .bp-bar{ display:flex; height:14px; background:var(--card-hi); border-radius:999px; overflow:hidden; margin-bottom:4px; }
+  .bp-bar span{ display:block; height:100%; transition:width .2s ease; }
+  .bp-group{ border-top:1px solid var(--border-soft); }
+  .bp-bar + .bp-group{ border-top:none; }
+  .bp-group summary{ display:flex; align-items:center; gap:8px; padding:14px 2px; cursor:pointer; list-style:none; -webkit-tap-highlight-color:transparent; }
+  .bp-group summary::-webkit-details-marker{ display:none; }
+  .bp-dot{ width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .bp-gname{ font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text); }
+  .bp-gpct{ font-size:0.74rem; color:var(--text-mute); font-family:var(--font-mono); white-space:nowrap; }
+  .bp-gamt{ margin-left:auto; font-family:var(--font-mono); font-weight:700; white-space:nowrap; color:var(--text); }
+  .bp-chev{ width:8px; height:8px; flex-shrink:0; margin:-3px 4px 0 6px; border-right:2px solid var(--text-mute); border-bottom:2px solid var(--text-mute); transform:rotate(45deg); transition:transform .2s ease; }
+  .bp-group[open] .bp-chev{ transform:rotate(-135deg); margin-top:3px; }
+  .bp-items{ padding:0 2px 6px; }
+  .bp-item{ margin-bottom:16px; }
+  .bp-ilabel{ font-size:0.88rem; color:var(--text-soft); margin-bottom:8px; line-height:1.3; }
+  .bp-ctl{ display:flex; align-items:center; gap:16px; }
+  .bp-range{ flex:1; min-width:0; height:6px; border-radius:999px; outline:none; cursor:pointer; -webkit-appearance:none; appearance:none;
+    background:linear-gradient(to right, var(--accent) 0, var(--accent) var(--p, 0%), var(--card-hi) var(--p, 0%), var(--card-hi) 100%); }
+  .bp-range::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:20px; height:28px; border-radius:10px; background:var(--card); border:3px solid var(--text); box-shadow:0 2px 6px rgba(0,0,0,.25); }
+  .bp-range::-moz-range-thumb{ width:14px; height:22px; border-radius:10px; background:var(--card); border:3px solid var(--text); }
+  .bp-range::-moz-range-track{ background:transparent; }
+  .bp-amt{ display:flex; align-items:center; gap:6px; flex:0 0 clamp(92px, 30%, 124px); background:var(--card-hi); border:1px solid var(--border); border-radius:12px; padding:0 10px; }
+  .bp-amt span{ color:var(--text-mute); }
+  .bp-amt input{ width:100%; min-width:0; background:transparent; border:none; outline:none; text-align:right; color:var(--text); font-family:var(--font-mono); font-size:16px; padding:9px 0; }
+  .bp-num.field-error{ color:var(--danger); box-shadow:none !important; animation:none !important; }
+  .bp-field:has(.field-error), .bp-amt:has(.field-error){ border-color:var(--danger); }
+  .bp-card .btn-primary{ margin-top:18px; }
+  .prof-links{ display:flex; gap:8px; margin-top:8px; }
+  .prof-links .reset-btn{ flex:1; margin-top:0; }
 
   .tab-section{ display:none; }
   .tab-section.active{ display:block; }
@@ -429,16 +451,14 @@
 <div id="appRoot" style="display:none;">
 <div class="sheet">
   <header>
-    <h1>WIS<span class="coin-click-wrap" id="coinClickWrap"><img class="coin-img" id="headerCoinImg" src="" alt="€"></span></h1>
+    <h1>WIS<span class="coin-click-wrap"><img class="coin-img" id="headerCoinImg" src="" alt="€"></span></h1>
     <p class="subtitle" id="pageSubtitle"></p>
   </header>
 
   <!-- TAB: HOME -->
   <section class="tab-section active" id="tab-home">
-    <div class="jar-card">
-      <div class="jar"><div class="jar-glass"></div><div class="jar-coins" id="jarCoins"></div></div>
-      <p class="jar-count" id="jarCountText"></p>
-    </div>
+    <div id="profileBlock" style="display:none;"></div>
+    <div id="recBlock" style="display:none;"></div>
     <div id="setupBlock">
       <div class="block">
         <div class="card hero">
@@ -584,6 +604,10 @@
           <button data-theme="light" data-i18n="mode_light">Clair</button>
         </div>
       </div>
+      <div class="settings-row">
+        <span data-i18n="set_profile_row">Budget mensuel</span>
+        <button class="reset-btn ghost" id="profileRedoBtn" data-i18n="btn_profile_redo" style="width:auto; margin-top:0; padding:8px 14px;">Modifier</button>
+      </div>
     </div></div>
 
     <div class="block"><details class="card quiet fold">
@@ -608,7 +632,7 @@
 
     <div class="block"><div class="card quiet">
       <div class="block-title" data-i18n="title_about">À propos</div>
-      <p class="subtitle" style="margin:0 0 6px;">WIS€ — v1.3</p>
+      <p class="subtitle" style="margin:0 0 6px;">WIS€ — v1.4</p>
 
     </div></div>
 
@@ -669,7 +693,7 @@
     totalCents:null, base:10, combo:null, labels:null, finalized:false, repartitions:[],
     goals:[], totalAssociatedToGoals:0, associationLog:[],
     expenses:[], chat:{ messages:[] },
-    account:{ name:'', photo:null }, jarCoins:0, onboardingSeen:false,
+    account:{ name:'', photo:null }, profile:null, budget:null, onboardingSeen:false,
     settings:{ lang:'fr', currency:'EUR', theme:'dark', notifications:false }
   };
   let nextExpId = 1;
@@ -684,6 +708,49 @@
     fr:{
       nav_home:'Accueil', nav_goal:'Objectif', nav_history:'Historique', nav_profile:'Paramètres',
       sub_home:"Indique tout ce que tu possèdes. Choisis de le répartir en dixièmes ou en pourcentages, pioche une combinaison, puis donne un nom à chaque part — l'idée est de répartir ce que tu possèdes selon tes dépenses et selon leur importance.",
+            bp_title:"Mon budget du mois",
+      bp_intro:"Règle ton budget du mois avec les curseurs : on te propose en direct la répartition qui te correspond. Rien n'est envoyé nulle part.",
+      bp_kpi_spend:"Dépenses du mois",
+      bp_kpi_free:"Reste libre",
+      bp_kpi_rate:"Taux d'épargne",
+      bp_income_q:"Quel est ton revenu mensuel net ?",
+      bp_income_help:"Salaire, aides, revenus réguliers : ce qui arrive chez toi chaque mois.",
+      bp_split_title:"Répartition de ton mois",
+      bp_g_housing:"Logement",
+      bp_g_fixed:"Charges fixes",
+      bp_g_daily:"Vie courante",
+      bp_g_fun:"Plaisirs",
+      bp_g_saving:"Épargne",
+      bp_i_rent:"Loyer ou crédit immobilier",
+      bp_i_utilities:"Charges (eau, énergie, internet)",
+      bp_i_insurance:"Assurances (santé, auto, habitation)",
+      bp_i_subs:"Abonnements (téléphone, streaming, sport)",
+      bp_i_loans:"Crédits et remboursements",
+      bp_i_groceries:"Courses et alimentation",
+      bp_i_transport:"Transport et carburant",
+      bp_i_health:"Santé et soins",
+      bp_i_going_out:"Sorties et restaurants",
+      bp_i_leisure:"Loisirs et shopping",
+      bp_i_trips:"Voyages et cadeaux",
+      bp_i_saving:"Épargne mensuelle souhaitée",
+      bp_hint:"Indique ton revenu et tes dépenses pour voir la répartition conseillée.",
+      bp_done:"Terminé",
+      prof_res_title:"Ta répartition conseillée",
+      prof_res_intro:"D'après ton budget, voici la répartition de tes revenus qui te correspond le mieux.",
+      prof_part_needs:"Besoins",
+      prof_part_wants:"Plaisirs",
+      prof_part_savings:"Épargne",
+      prof_part_buffer:"Marge",
+      prof_part_pct:"≈ {p} %",
+      prof_res_why:"Tes besoins (charges fixes et essentiel) représentent {n} % de tes revenus, tes plaisirs {w} %, et tu souhaites épargner {s} %.",
+      prof_res_buffer:"Il te reste {b} par mois : je l'ai placé dans « Marge », pour les imprévus.",
+      prof_res_over:"Attention : tes dépenses et ton épargne dépassent tes revenus de {o} par mois. La répartition ci-dessus est ajustée proportionnellement ; tu peux revoir tes réponses.",
+      prof_res_need_total:"Indique d'abord ce que tu possèdes plus bas, puis applique cette répartition.",
+      prof_use:"Utiliser cette répartition",
+      prof_manual:"Choisir moi-même",
+      prof_note:"Repères calculés à partir de ton budget, pas un conseil financier personnalisé.",
+      set_profile_row:"Budget mensuel",
+      btn_profile_redo:"Modifier",
       sub_goal:"Fixe un objectif d'épargne et une date d'échéance : on calcule combien mettre de côté pour l'atteindre.",
       sub_history:"Note tes dépenses au jour le jour et visualise ce que tu as dépensé sur les 31 derniers jours.",
       sub_profile:"Gère les préférences de l'application.",
@@ -720,26 +787,68 @@
       title_settings:"Paramètres", lbl_language:"Langue", lbl_currency:"Monnaie", lbl_mode:"Mode",
       mode_dark:"Sombre", mode_light:"Clair",
       title_help:"Aide",
-      help_home_title:"Répartition", help_home_text:"Indique tout ce que tu possèdes, choisis dixièmes ou pourcentages, puis choisis une combinaison de chiffres qui donne 10 ou 100. Donne un nom à chaque part pour voir comment répartir ton argent — l'idée est de le répartir selon tes dépenses et selon leur importance.",
+      help_home_title:"Répartition", help_home_text:"Règle ton budget du mois avec les curseurs : l'appli te propose en direct la répartition qui te correspond. Indique ensuite tout ce que tu possèdes, puis applique cette répartition ou choisis toi-même une combinaison de chiffres qui donne 10 ou 100. Donne un nom à chaque part — l'idée est de répartir ce que tu possèdes selon tes dépenses et selon leur importance.",
       help_goal_title:"Objectifs", help_goal_text:"Crée un ou plusieurs objectifs d'épargne avec un montant et une date précise. L'appli calcule combien mettre de côté par mois, par semaine et par jour. Un objectif atteint est marqué automatiquement comme accompli.",
       help_history_title:"Historique", help_history_text:"Note tes dépenses et tes gains au jour le jour. Le graphique des 31 derniers jours affiche les gains en vert et les dépenses en rouge, avec le solde final — que tu peux ensuite associer à l'un de tes objectifs. L'argent que tu mets de côté pour un objectif apparaît en bleu dans la liste.",
       help_data_title:"Tes données", help_data_text:"Tout est stocké uniquement sur cet appareil, sans compte ni connexion. Le bouton \"Réinitialiser les données\" efface définitivement tout ce que tu as enregistré.",
       title_about:"À propos", about_creator:"Créé par",
       title_data:"Données", btn_reset_data:"Réinitialiser les données", btn_reset_confirm:"Confirmer la suppression ?", confirm_reset:"Es-tu sûr de vouloir réinitialiser toutes les données ? Cette action est irréversible.",
-      jar_count_zero:"Touche la pièce WIS€ en haut pour la déposer dans le bocal.", jar_count_some:"pièces dans le bocal",
       chat_hint:"Pose une question sur ton budget, ton objectif ou tes dépenses.",
       chat_placeholder:"Écris ton message...", chat_send:"Envoyer",
       chat_greeting:"Bonjour ! Je peux t'aider à gérer ton budget, ton objectif d'épargne ou tes dépenses. Pose-moi une question.",
       ph_part_name:"Nom de cette part", btn_validate:"Valider la répartition", btn_remove:"retirer",
       btn_edit:"Modifier", btn_save:"Enregistrer", btn_cancel:"Annuler", field_required:"Ce champ est obligatoire.",
       onboard1_title:"Bienvenue sur WIS€", onboard1_text:"Une appli 100 % locale, sans compte ni connexion, pour répartir ton argent et suivre tes objectifs d'épargne.",
-      onboard2_title:"Le principe des combinaisons", onboard2_text:"Indique ce que tu possèdes, puis choisis une combinaison de chiffres qui fait 10 (ou 100 en pourcentages). Chaque chiffre devient une part que tu nommes toi-même — l'idée est de répartir ce que tu possèdes selon tes dépenses et selon leur importance.",
+      onboard2_title:"Le principe des combinaisons", onboard2_text:"Règle d'abord ton budget du mois avec les curseurs : WIS€ te propose la répartition qui te correspond. Indique ensuite ce que tu possèdes, et chaque chiffre de la combinaison devient une part que tu nommes — l'idée est de répartir ce que tu possèdes selon tes dépenses et selon leur importance.",
       onboard3_title:"Objectifs et historique", onboard3_text:"Crée des objectifs d'épargne, note tes gains et dépenses, et laisse l'appli t'aider à répartir ton argent entre eux — sans jamais le compter deux fois.",
       onboard_next:"Suivant", onboard_start:"Commencer", onboard_skip:"Passer"
     },
     en:{
       nav_home:'Home', nav_goal:'Goal', nav_history:'History', nav_profile:'Settings',
       sub_home:"Enter everything you own. Split it into tenths or percentages, pick a combination, then name each part — the idea is to split what you own based on your expenses and how important they are.",
+            bp_title:"My monthly budget",
+      bp_intro:"Set your monthly budget with the sliders: we suggest the split that suits you, live. Nothing is sent anywhere.",
+      bp_kpi_spend:"Monthly spending",
+      bp_kpi_free:"Left free",
+      bp_kpi_rate:"Savings rate",
+      bp_income_q:"What is your net monthly income?",
+      bp_income_help:"Salary, benefits, regular income: what reaches you each month.",
+      bp_split_title:"How your month splits",
+      bp_g_housing:"Housing",
+      bp_g_fixed:"Fixed costs",
+      bp_g_daily:"Daily life",
+      bp_g_fun:"Fun",
+      bp_g_saving:"Savings",
+      bp_i_rent:"Rent or mortgage",
+      bp_i_utilities:"Utilities (water, energy, internet)",
+      bp_i_insurance:"Insurance (health, car, home)",
+      bp_i_subs:"Subscriptions (phone, streaming, gym)",
+      bp_i_loans:"Loans and repayments",
+      bp_i_groceries:"Groceries and food",
+      bp_i_transport:"Transport and fuel",
+      bp_i_health:"Health and care",
+      bp_i_going_out:"Going out and restaurants",
+      bp_i_leisure:"Leisure and shopping",
+      bp_i_trips:"Trips and gifts",
+      bp_i_saving:"Monthly savings goal",
+      bp_hint:"Enter your income and spending to see the suggested split.",
+      bp_done:"Done",
+      prof_res_title:"Your suggested split",
+      prof_res_intro:"Based on your budget, here is the split of your income that fits you best.",
+      prof_part_needs:"Needs",
+      prof_part_wants:"Wants",
+      prof_part_savings:"Savings",
+      prof_part_buffer:"Buffer",
+      prof_part_pct:"≈ {p}%",
+      prof_res_why:"Your needs (fixed costs and essentials) take {n}% of your income, your wants {w}%, and you'd like to save {s}%.",
+      prof_res_buffer:"You have {b} left each month: it goes into “Buffer”, for the unexpected.",
+      prof_res_over:"Careful: your spending and savings exceed your income by {o} per month. The split above is adjusted proportionally; you can review your answers.",
+      prof_res_need_total:"First enter what you own below, then apply this split.",
+      prof_use:"Use this split",
+      prof_manual:"I'll choose myself",
+      prof_note:"Guidelines calculated from your budget, not personalised financial advice.",
+      set_profile_row:"Monthly budget",
+      btn_profile_redo:"Edit",
       sub_goal:"Set a savings goal and a deadline date: we calculate how much to save to reach it.",
       sub_history:"Log your expenses day by day and see what you spent over the last 31 days.",
       sub_profile:"Manage the app's preferences.",
@@ -776,26 +885,68 @@
       title_settings:"Settings", lbl_language:"Language", lbl_currency:"Currency", lbl_mode:"Mode",
       mode_dark:"Dark", mode_light:"Light",
       title_help:"Help",
-      help_home_title:"Split", help_home_text:"Enter everything you own, choose tenths or percentages, then pick a digit combination that adds up to 10 or 100. Name each part to see how your money is split — the idea is to split it based on your expenses and how important they are.",
+      help_home_title:"Split", help_home_text:"Set your monthly budget with the sliders: the app suggests the split that suits you, live. Then enter everything you own, and either apply that split or pick a digit combination that adds up to 10 or 100 yourself. Name each part — the idea is to split what you own based on your expenses and how important they are.",
       help_goal_title:"Goals", help_goal_text:"Create one or several savings goals with an amount and a precise date. The app calculates how much to save per month, week and day. A goal that's reached is automatically marked as completed.",
       help_history_title:"History", help_history_text:"Log your expenses and income day by day. The 31-day chart shows income in green and expenses in red, with the final balance — which you can then link to one of your goals. Money you set aside for a goal shows up in blue in the list.",
       help_data_title:"Your data", help_data_text:"Everything is stored only on this device, with no account and no connection. The \"Reset data\" button permanently erases everything you've saved.",
       title_about:"About", about_creator:"Created by",
       title_data:"Data", btn_reset_data:"Reset all data", btn_reset_confirm:"Confirm deletion?", confirm_reset:"Are you sure you want to reset all data? This cannot be undone.",
-      jar_count_zero:"Tap the WIS€ coin above to drop it in the jar.", jar_count_some:"coins in the jar",
       chat_hint:"Ask a question about your budget, goal or expenses.",
       chat_placeholder:"Type your message...", chat_send:"Send",
       chat_greeting:"Hi! I can help you manage your budget, savings goal or expenses. Ask me anything.",
       ph_part_name:"Name this part", btn_validate:"Confirm the split", btn_remove:"remove",
       btn_edit:"Edit", btn_save:"Save", btn_cancel:"Cancel", field_required:"This field is required.",
       onboard1_title:"Welcome to WIS€", onboard1_text:"A fully local app, no account or connection needed, to split your money and track your savings goals.",
-      onboard2_title:"How combinations work", onboard2_text:"Enter what you own, then pick a digit combination that adds up to 10 (or 100 for percentages). Each digit becomes a part you name yourself — the idea is to split what you own based on your expenses and how important they are.",
+      onboard2_title:"How combinations work", onboard2_text:"First set up your monthly budget with the sliders: WIS€ suggests the split that suits you. Then enter what you own, and each digit of the combination becomes a part you name — the idea is to split what you own based on your expenses and how important they are.",
       onboard3_title:"Goals and history", onboard3_text:"Create savings goals, log your income and expenses, and let the app help you split your money between them — never counting it twice.",
       onboard_next:"Next", onboard_start:"Get started", onboard_skip:"Skip"
     },
     de:{
       nav_home:'Start', nav_goal:'Ziel', nav_history:'Verlauf', nav_profile:'Einstellungen',
       sub_home:"Gib alles an, was du besitzt. Teile es in Zehntel oder Prozente auf, wähle eine Kombination und benenne dann jeden Teil — die Idee ist, das, was du besitzt, nach deinen Ausgaben und deren Wichtigkeit aufzuteilen.",
+            bp_title:"Mein Monatsbudget",
+      bp_intro:"Stelle dein Monatsbudget mit den Reglern ein: Wir schlagen dir live die passende Aufteilung vor. Nichts wird irgendwohin gesendet.",
+      bp_kpi_spend:"Monatliche Ausgaben",
+      bp_kpi_free:"Frei",
+      bp_kpi_rate:"Sparquote",
+      bp_income_q:"Wie hoch ist dein monatliches Nettoeinkommen?",
+      bp_income_help:"Gehalt, Zuschüsse, regelmäßige Einnahmen: was jeden Monat bei dir ankommt.",
+      bp_split_title:"Aufteilung deines Monats",
+      bp_g_housing:"Wohnen",
+      bp_g_fixed:"Fixkosten",
+      bp_g_daily:"Alltag",
+      bp_g_fun:"Vergnügen",
+      bp_g_saving:"Sparen",
+      bp_i_rent:"Miete oder Hauskredit",
+      bp_i_utilities:"Nebenkosten (Wasser, Energie, Internet)",
+      bp_i_insurance:"Versicherungen (Gesundheit, Auto, Wohnung)",
+      bp_i_subs:"Abos (Handy, Streaming, Sport)",
+      bp_i_loans:"Kredite und Rückzahlungen",
+      bp_i_groceries:"Lebensmittel",
+      bp_i_transport:"Verkehr und Kraftstoff",
+      bp_i_health:"Gesundheit und Pflege",
+      bp_i_going_out:"Ausgehen und Restaurants",
+      bp_i_leisure:"Freizeit und Shopping",
+      bp_i_trips:"Reisen und Geschenke",
+      bp_i_saving:"Gewünschtes monatliches Sparen",
+      bp_hint:"Gib dein Einkommen und deine Ausgaben an, um die empfohlene Aufteilung zu sehen.",
+      bp_done:"Fertig",
+      prof_res_title:"Deine empfohlene Aufteilung",
+      prof_res_intro:"Nach deinem Budget passt diese Aufteilung deines Einkommens am besten zu dir.",
+      prof_part_needs:"Bedarf",
+      prof_part_wants:"Wünsche",
+      prof_part_savings:"Sparen",
+      prof_part_buffer:"Puffer",
+      prof_part_pct:"≈ {p} %",
+      prof_res_why:"Dein Bedarf (Fixkosten und Notwendiges) macht {n} % deines Einkommens aus, deine Wünsche {w} %, und du möchtest {s} % sparen.",
+      prof_res_buffer:"Dir bleiben jeden Monat {b} übrig: Sie landen im „Puffer“ für Unvorhergesehenes.",
+      prof_res_over:"Achtung: Deine Ausgaben und dein Sparziel übersteigen dein Einkommen um {o} pro Monat. Die Aufteilung oben ist proportional angepasst; du kannst deine Antworten überprüfen.",
+      prof_res_need_total:"Gib zuerst unten ein, was du besitzt, und wende dann diese Aufteilung an.",
+      prof_use:"Diese Aufteilung verwenden",
+      prof_manual:"Ich wähle selbst",
+      prof_note:"Richtwerte, die aus deinem Budget berechnet werden, keine persönliche Finanzberatung.",
+      set_profile_row:"Monatsbudget",
+      btn_profile_redo:"Ändern",
       sub_goal:"Lege ein Sparziel und ein Fälligkeitsdatum fest: wir berechnen, wie viel du sparen musst.",
       sub_history:"Erfasse deine Ausgaben Tag für Tag und sieh, was du in den letzten 31 Tagen ausgegeben hast.",
       sub_profile:"Verwalte die App-Einstellungen.",
@@ -832,20 +983,19 @@
       title_settings:"Einstellungen", lbl_language:"Sprache", lbl_currency:"Währung", lbl_mode:"Modus",
       mode_dark:"Dunkel", mode_light:"Hell",
       title_help:"Hilfe",
-      help_home_title:"Aufteilung", help_home_text:"Gib alles an, was du besitzt, wähle Zehntel oder Prozente, und wähle dann eine Ziffernkombination, die 10 oder 100 ergibt. Benenne jeden Teil, um zu sehen, wie dein Geld aufgeteilt wird — die Idee ist, es nach deinen Ausgaben und deren Wichtigkeit aufzuteilen.",
+      help_home_title:"Aufteilung", help_home_text:"Stelle dein Monatsbudget mit den Reglern ein: Die App schlägt dir live die passende Aufteilung vor. Gib dann alles an, was du besitzt, und wende diese Aufteilung an oder wähle selbst eine Ziffernkombination, die 10 oder 100 ergibt. Benenne jeden Teil — die Idee ist, das, was du besitzt, nach deinen Ausgaben und deren Wichtigkeit aufzuteilen.",
       help_goal_title:"Ziele", help_goal_text:"Erstelle ein oder mehrere Sparziele mit einem Betrag und einem genauen Datum. Die App berechnet, wie viel du pro Monat, Woche und Tag sparen musst. Ein erreichtes Ziel wird automatisch als erreicht markiert.",
       help_history_title:"Verlauf", help_history_text:"Erfasse deine Ausgaben und Einnahmen Tag für Tag. Das Diagramm der letzten 31 Tage zeigt Einnahmen in Grün und Ausgaben in Rot, mit dem Endsaldo — den du danach einem deiner Ziele zuordnen kannst. Geld, das du für ein Ziel zurücklegst, erscheint blau in der Liste.",
       help_data_title:"Deine Daten", help_data_text:"Alles wird nur auf diesem Gerät gespeichert, ohne Konto und ohne Verbindung. Die Schaltfläche „Daten zurücksetzen\" löscht endgültig alles, was du gespeichert hast.",
       title_about:"Über uns", about_creator:"Erstellt von",
       title_data:"Daten", btn_reset_data:"Daten zurücksetzen", btn_reset_confirm:"Löschen bestätigen?", confirm_reset:"Möchtest du wirklich alle Daten zurücksetzen? Das kann nicht rückgängig gemacht werden.",
-      jar_count_zero:"Tippe oben auf die WIS€-Münze, um sie ins Glas fallen zu lassen.", jar_count_some:"Münzen im Glas",
       chat_hint:"Stelle eine Frage zu deinem Budget, deinem Ziel oder deinen Ausgaben.",
       chat_placeholder:"Schreib deine Nachricht...", chat_send:"Senden",
       chat_greeting:"Hallo! Ich kann dir helfen, dein Budget, dein Sparziel oder deine Ausgaben zu verwalten. Frag mich einfach.",
       ph_part_name:"Name dieses Teils", btn_validate:"Aufteilung bestätigen", btn_remove:"entfernen",
       btn_edit:"Bearbeiten", btn_save:"Speichern", btn_cancel:"Abbrechen", field_required:"Dieses Feld ist erforderlich.",
       onboard1_title:"Willkommen bei WIS€", onboard1_text:"Eine komplett lokale App, ohne Konto oder Verbindung, um dein Geld aufzuteilen und deine Sparziele zu verfolgen.",
-      onboard2_title:"So funktionieren die Kombinationen", onboard2_text:"Gib an, was du besitzt, und wähle dann eine Ziffernkombination, die 10 (oder 100 bei Prozenten) ergibt. Jede Ziffer wird zu einem Teil, den du selbst benennst — die Idee ist, das, was du besitzt, nach deinen Ausgaben und deren Wichtigkeit aufzuteilen.",
+      onboard2_title:"So funktionieren die Kombinationen", onboard2_text:"Stelle zuerst dein Monatsbudget mit den Reglern ein: WIS€ schlägt dir die passende Aufteilung vor. Gib dann an, was du besitzt, und jede Ziffer der Kombination wird zu einem Teil, den du benennst — die Idee ist, das, was du besitzt, nach deinen Ausgaben und deren Wichtigkeit aufzuteilen.",
       onboard3_title:"Ziele und Verlauf", onboard3_text:"Erstelle Sparziele, erfasse deine Einnahmen und Ausgaben, und lass die App dir helfen, dein Geld darauf aufzuteilen — ohne es je doppelt zu zählen.",
       onboard_next:"Weiter", onboard_start:"Loslegen", onboard_skip:"Überspringen"
     }
@@ -869,9 +1019,6 @@
     onboardNextBtn: document.getElementById('onboardNextBtn'),
     onboardSkipBtn: document.getElementById('onboardSkipBtn'),
     resetDataBtn: document.getElementById('resetDataBtn'),
-    coinClickWrap: document.getElementById('coinClickWrap'),
-    jarCoins: document.getElementById('jarCoins'),
-    jarCountText: document.getElementById('jarCountText'),
 
     inpTotal: document.getElementById('inpTotal'),
     totalSuffix: document.getElementById('totalSuffix'),
@@ -890,6 +1037,9 @@
     prevRepartitionsBlock: document.getElementById('prevRepartitionsBlock'),
     prevRepartitionsList: document.getElementById('prevRepartitionsList'),
     pageSubtitle: document.getElementById('pageSubtitle'),
+    profileBlock: document.getElementById('profileBlock'),
+    recBlock: document.getElementById('recBlock'),
+    profileRedoBtn: document.getElementById('profileRedoBtn'),
 
     inpNewGoalName: document.getElementById('inpNewGoalName'),
     inpGoalTarget: document.getElementById('inpGoalTarget'),
@@ -1028,45 +1178,6 @@
   });
   els.onboardSkipBtn.addEventListener('click', finishOnboarding);
 
-  /* ---------- Jar: tap the WIS€ coin to drop a coin in the jar ---------- */
-  function renderJar(){
-    const n = state.jarCoins || 0;
-    els.jarCoins.innerHTML = Array.from({length:n}).map(() => '<span class="jar-coin-dot"></span>').join('');
-    els.jarCountText.textContent = n === 0 ? tr('jar_count_zero') : (n + ' ' + tr('jar_count_some'));
-  }
-  function dropCoinAnimation(){
-    const coinRect = els.coinClickWrap.getBoundingClientRect();
-    let targetRect;
-    const jarVisible = els.jarCoins && els.jarCoins.offsetParent !== null;
-    if(jarVisible){ targetRect = els.jarCoins.getBoundingClientRect(); }
-    else { targetRect = { left: window.innerWidth/2 - 10, top: window.innerHeight - 160, width:20, height:20 }; }
-    const clone = document.createElement('div');
-    clone.className = 'falling-coin';
-    clone.style.left = (coinRect.left + coinRect.width/2 - 10) + 'px';
-    clone.style.top = (coinRect.top + coinRect.height/2 - 10) + 'px';
-    document.body.appendChild(clone);
-    requestAnimationFrame(() => {
-      const dx = (targetRect.left + targetRect.width/2) - (coinRect.left + coinRect.width/2);
-      const dy = (targetRect.top + Math.min(targetRect.height, 20)/2) - (coinRect.top + coinRect.height/2);
-      clone.style.transition = 'transform .7s cubic-bezier(.5,0,.85,.15), opacity .2s ease .5s';
-      clone.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(560deg) scale(.6)';
-      clone.style.opacity = '0.85';
-    });
-    setTimeout(() => {
-      clone.remove();
-      state.jarCoins = (state.jarCoins || 0) + 1;
-      save();
-      renderJar();
-    }, 720);
-    els.coinClickWrap.classList.add('coin-pop-out');
-    setTimeout(() => {
-      els.coinClickWrap.classList.remove('coin-pop-out');
-      els.coinClickWrap.classList.add('coin-pop-in');
-      setTimeout(() => els.coinClickWrap.classList.remove('coin-pop-in'), 320);
-    }, 160);
-  }
-  els.coinClickWrap.addEventListener('click', () => { if(activeTab === 'home') dropCoinAnimation(); });
-
   let resetConfirmPending = false, resetConfirmTimeout = null;
   els.resetDataBtn.addEventListener('click', () => {
     if(!resetConfirmPending){
@@ -1087,7 +1198,7 @@
     state = {
       totalCents:null, base:10, combo:null, labels:null, finalized:false, repartitions:[],
       goals:[], totalAssociatedToGoals:0, associationLog:[],
-      expenses:[], chat:{ messages:[] }, account:{ name:'', photo:null }, jarCoins:0, onboardingSeen:false,
+      expenses:[], chat:{ messages:[] }, account:{ name:'', photo:null }, profile:null, budget:null, onboardingSeen:false,
       settings:{ lang:detectDeviceLang(), currency:'EUR', theme:'dark', notifications:false }
     };
     nextExpId = 1;
@@ -1098,10 +1209,11 @@
     editingGoalId = null;
     editingFinal = false;
     editingRepId = null;
+    editingBudget = false; plannerKey = '';
     save();
     applyTheme();
     applyI18n();
-    renderHome(); renderGoal(); renderHistory(); renderProfile(); renderJar();
+    renderHome(); renderGoal(); renderHistory(); renderProfile();
     setTab('home');
     showOnboarding();
   });
@@ -1113,7 +1225,6 @@
     document.getElementById('tab-' + tab).classList.add('active');
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     els.pageSubtitle.textContent = tr(subKeyForTab(tab));
-    els.coinClickWrap.style.cursor = tab === 'home' ? 'pointer' : 'default';
     if(tab === 'history') renderHistory();
     if(tab === 'goal') renderGoal();
     if(tab === 'profile') renderProfile();
@@ -1302,12 +1413,285 @@
       });
     });
   }
+
+  /* ---------- Questionnaire d'accueil : propose une répartition adaptée ---------- */
+  // Groupes du planificateur de budget : (clé, couleur de la barre, lignes de dépense)
+  const BUDGET_GROUPS = [
+    { key:'housing', color:'#5AA9E6', items:['rent', 'utilities'] },
+    { key:'fixed',   color:'#34D399', items:['insurance', 'subs', 'loans'] },
+    { key:'daily',   color:'#E8B84B', items:['groceries', 'transport', 'health'] },
+    { key:'fun',     color:'#B39DDB', items:['going_out', 'leisure', 'trips'] },
+    { key:'saving',  color:'#F472B6', items:['saving'] }
+  ];
+  let editingBudget = false, plannerKey = '';
+  const PROF_BIAS = { savings:0.02, needs:0.01, wants:0, buffer:0 };   // à égalité d'arrondi : l'épargne voulue passe en premier
+
+  // Calcule la répartition en dixièmes à partir des réponses (montants mensuels, en centimes).
+  function computeRecommendation(pr){
+    const I = pr.incomeCents;
+    let n = pr.fixedCents + pr.essentialCents, w = pr.funCents, sv = pr.saveCents;
+    const used = n + w + sv;
+    let free = I - used, over = 0;
+    if(free < 0){ over = -free; const f = I / used; n *= f; w *= f; sv *= f; free = 0; }
+    const parts = [{ k:'needs', v:n }, { k:'wants', v:w }, { k:'savings', v:sv }];
+    const hasBuffer = free / I >= 0.075;                 // reste d'au moins ~1/10 : on le garde comme « Marge »
+    if(hasBuffer) parts.push({ k:'buffer', v:free });
+    const sum = parts.reduce((a, x) => a + x.v, 0);
+    const raw = parts.map(x => x.v / sum * 10);
+    const t = raw.map(r => Math.max(1, Math.floor(r)));  // au moins 1/10 pour chaque part
+    let total = t.reduce((a, b) => a + b, 0);
+    while(total < 10){
+      let bi = 0, bv = -Infinity;
+      raw.forEach((r, i) => { const d = r - t[i] + PROF_BIAS[parts[i].k]; if(d > bv){ bv = d; bi = i; } });
+      t[bi]++; total++;
+    }
+    while(total > 10){
+      let bi = -1, bv = Infinity;
+      raw.forEach((r, i) => { const d = r - t[i] + PROF_BIAS[parts[i].k]; if(t[i] > 1 && d < bv){ bv = d; bi = i; } });
+      if(bi < 0) break;
+      t[bi]--; total--;
+    }
+    return {
+      combo: t, keys: parts.map(x => x.k), hasBuffer, free, over,
+      pct: parts.map(x => Math.round(x.v / I * 100)),
+      whyN: Math.round((pr.fixedCents + pr.essentialCents) / I * 100),
+      whyW: Math.round(pr.funCents / I * 100),
+      whyS: Math.round(pr.saveCents / I * 100)
+    };
+  }
+  const AMT_RE = /^\d[\d\s\u00A0\u202F]*([.,]\d{0,2})?$/;   // montant valide : chiffres, espaces, virgule ou point
+  function budgetDefaults(){ return { incomeCents:null, items:{}, open:{ housing:true } }; }
+  function ensureBudget(){
+    const b = state.budget;
+    if(!b || typeof b !== 'object'){ state.budget = budgetDefaults(); return state.budget; }
+    if(!b.items || typeof b.items !== 'object') b.items = {};
+    if(!b.open || typeof b.open !== 'object') b.open = {};
+    return b;
+  }
+  function itemCents(k){ const v = ensureBudget().items[k]; return v > 0 ? v : 0; }
+  function budgetTotals(){
+    const b = ensureBudget();
+    const income = b.incomeCents > 0 ? b.incomeCents : 0;
+    const g = {};
+    BUDGET_GROUPS.forEach(x => { g[x.key] = x.items.reduce((sum, k) => sum + itemCents(k), 0); });
+    const spend = g.housing + g.fixed + g.daily + g.fun;
+    return { income, g, spend, save: g.saving, free: income - spend - g.saving };
+  }
+  // Ce que lit l'algorithme de recommandation (null tant qu'il n'y a pas de revenu et au moins une dépense)
+  function budgetProfile(){
+    const t = budgetTotals();
+    if(t.income <= 0 || t.spend + t.save <= 0) return null;
+    return { incomeCents:t.income, fixedCents:t.g.housing + t.g.fixed, essentialCents:t.g.daily, funCents:t.g.fun, saveCents:t.g.saving };
+  }
+  function profileMode(){
+    if(editingBudget) return 'edit';
+    if(state.finalized) return 'none';
+    if(state.profile && state.profile.skipped) return 'none';
+    if(state.combo) return 'none';
+    return 'planner';
+  }
+  const fmtWhole = (cents) => fmtNum(Math.round(cents / 100) * 100).replace(/,00$/, '') + ' ' + (currencySymbols[state.settings.currency] || '€');
+  const inputText = (cents) => cents > 0 ? String(cents / 100).replace('.', ',') : '';
+  function sliderMax(){
+    const inc = Math.round(budgetTotals().income / 100);
+    return inc > 0 ? Math.max(50, Math.ceil(inc / 50) * 50) : 1000;
+  }
+  function setRangeFill(r){
+    const max = parseFloat(r.max) || 1;
+    r.style.setProperty('--p', Math.min(100, Math.max(0, parseFloat(r.value) / max * 100)) + '%');
+  }
+  function syncRange(k){
+    const r = els.profileBlock.querySelector('.bp-range[data-k="' + k + '"]');
+    if(!r) return;
+    const eur = Math.round(itemCents(k) / 100);
+    r.max = Math.max(sliderMax(), eur);
+    r.value = eur;
+    setRangeFill(r);
+  }
+  function syncAllRanges(){ BUDGET_GROUPS.forEach(g => g.items.forEach(syncRange)); }
+
+  function renderPlanner(mode){
+    const sym = currencySymbols[state.settings.currency] || '€';
+    const b = ensureBudget();
+    const attr = (t) => escapeHtml(t).replace(/"/g, '&quot;');
+    const groupsHtml = BUDGET_GROUPS.map(g => {
+      const items = g.items.map(k =>
+        '<div class="bp-item">' +
+          '<div class="bp-ilabel">' + tr('bp_i_' + k) + '</div>' +
+          '<div class="bp-ctl">' +
+            '<input type="range" class="bp-range" data-k="' + k + '" min="0" max="1000" step="5" value="0" aria-label="' + attr(tr('bp_i_' + k)) + '">' +
+            '<label class="bp-amt"><span>' + sym + '</span><input type="text" class="bp-num" data-k="' + k + '" inputmode="decimal" autocomplete="off" placeholder="0" value="' + inputText(itemCents(k)) + '" aria-label="' + attr(tr('bp_i_' + k)) + '"></label>' +
+          '</div>' +
+        '</div>').join('');
+      return '<details class="bp-group" data-g="' + g.key + '"' + (b.open[g.key] ? ' open' : '') + '>' +
+        '<summary><span class="bp-dot" style="background:' + g.color + '"></span><span class="bp-gname">' + tr('bp_g_' + g.key) + '</span>' +
+        '<span class="bp-gpct" data-pct="' + g.key + '"></span><span class="bp-gamt" data-amt="' + g.key + '"></span><span class="bp-chev"></span></summary>' +
+        '<div class="bp-items">' + items + '</div></details>';
+    }).join('');
+    els.profileBlock.innerHTML =
+      '<div class="card hero bp-card">' +
+        '<div class="block-title">' + tr('bp_title') + '</div>' +
+        '<div class="bp-kpis">' +
+          '<div class="bp-kpi"><div class="bp-kl">' + tr('bp_kpi_spend') + '</div><div class="bp-kv" id="bpSpend"></div></div>' +
+          '<div class="bp-kpi"><div class="bp-kl">' + tr('bp_kpi_free') + '</div><div class="bp-kv" id="bpFree"></div></div>' +
+          '<div class="bp-kpi"><div class="bp-kl">' + tr('bp_kpi_rate') + '</div><div class="bp-kv" id="bpRate"></div></div>' +
+        '</div>' +
+        '<div class="bp-q">' + tr('bp_income_q') + '</div>' +
+        '<label class="bp-field"><input type="text" id="bpIncome" class="bp-num" data-k="income" inputmode="decimal" autocomplete="off" placeholder="0,00" value="' + inputText(b.incomeCents) + '" aria-label="' + attr(tr('bp_income_q')) + '"><span>' + sym + '</span></label>' +
+        '<p class="bp-help">' + tr('bp_income_help') + '</p>' +
+        '<div class="bp-sub">' + tr('bp_split_title') + '</div>' +
+        '<div class="bp-bar" id="bpBar"></div>' +
+        groupsHtml +
+        (mode === 'edit' ? '<button type="button" class="btn-primary" id="bpDone">' + tr('bp_done') + '</button>' : '') +
+      '</div>';
+    els.profileBlock.querySelectorAll('details.bp-group').forEach(d => {
+      d.addEventListener('toggle', () => { ensureBudget().open[d.dataset.g] = d.open; save(); });
+    });
+    plannerKey = state.settings.lang + '|' + state.settings.currency + '|' + mode;
+    syncAllRanges();
+    updatePlannerTotals();
+  }
+
+  function updatePlannerTotals(){
+    const spendEl = document.getElementById('bpSpend');
+    if(!spendEl) return;
+    const t = budgetTotals();
+    spendEl.textContent = fmtWhole(t.spend);
+    const fr = document.getElementById('bpFree');
+    fr.textContent = t.income > 0 ? (t.free < 0 ? '−' : '') + fmtWhole(Math.abs(t.free)) : '—';
+    fr.className = 'bp-kv' + (t.income > 0 ? (t.free >= 0 ? ' positive' : ' negative') : '');
+    document.getElementById('bpRate').textContent = t.income > 0 ? Math.round(t.save / t.income * 100) + ' %' : '—';
+    BUDGET_GROUPS.forEach(g => {
+      const amt = els.profileBlock.querySelector('[data-amt="' + g.key + '"]');
+      const pct = els.profileBlock.querySelector('[data-pct="' + g.key + '"]');
+      if(amt) amt.textContent = fmtWhole(t.g[g.key]);
+      if(pct) pct.textContent = t.income > 0 ? Math.round(t.g[g.key] / t.income * 100) + ' %' : '';
+    });
+    // Barre empilée : chaque groupe pèse sa part du revenu ; ce qui reste libre reste gris
+    const denom = Math.max(t.income, t.spend + t.save);
+    document.getElementById('bpBar').innerHTML = denom <= 0 ? '' : BUDGET_GROUPS
+      .filter(g => t.g[g.key] > 0)
+      .map(g => '<span style="width:' + (t.g[g.key] / denom * 100) + '%;background:' + g.color + '"></span>').join('');
+    renderRecommendation();
+  }
+
+  function setBudgetValue(k, cents){
+    const b = ensureBudget();
+    if(k === 'income') b.incomeCents = cents; else b.items[k] = cents;
+  }
+  // Saisie au clavier ou au curseur : mise à jour en direct, enregistrement quand on relâche
+  els.profileBlock.addEventListener('input', (e) => {
+    const t = e.target;
+    if(t.classList.contains('bp-range')){
+      const k = t.dataset.k;
+      setBudgetValue(k, Math.round(parseFloat(t.value) * 100));
+      const num = els.profileBlock.querySelector('.bp-num[data-k="' + k + '"]');
+      if(num){ num.value = inputText(itemCents(k)); num.classList.remove('field-error'); }
+      setRangeFill(t);
+      updatePlannerTotals();
+    } else if(t.classList.contains('bp-num')){
+      const k = t.dataset.k, raw = t.value.trim();
+      if(raw === ''){ setBudgetValue(k, k === 'income' ? null : 0); t.classList.remove('field-error'); }
+      else if(!AMT_RE.test(raw)){ t.classList.add('field-error'); return; }   // invalide : on prévient, on n'enregistre rien
+      else { t.classList.remove('field-error'); setBudgetValue(k, toCents(raw)); }
+      if(k === 'income') syncAllRanges(); else syncRange(k);
+      updatePlannerTotals();
+    }
+  });
+  els.profileBlock.addEventListener('change', (e) => {
+    const t = e.target;
+    if(t.classList.contains('bp-num') && t.classList.contains('field-error')){
+      const k = t.dataset.k;
+      showToast(tr('invalid_amount_note'));
+      t.classList.remove('field-error');
+      t.value = inputText(k === 'income' ? (ensureBudget().incomeCents || 0) : itemCents(k));   // on remet la dernière valeur valide
+    }
+    if(t.classList.contains('bp-num') || t.classList.contains('bp-range')) save();
+  });
+  els.profileBlock.addEventListener('click', (e) => {
+    if(e.target.id === 'bpDone'){ editingBudget = false; save(); renderHome(); window.scrollTo(0, 0); }
+  });
+
+  function renderRecommendation(){
+    const mode = profileMode();
+    els.recBlock.style.display = mode === 'planner' ? 'block' : 'none';
+    if(mode !== 'planner'){ els.recBlock.innerHTML = ''; return; }
+    const pr = budgetProfile();
+    if(!pr){
+      els.recBlock.innerHTML = '<div class="card quiet"><p class="prof-help" style="margin:0;">' + tr('bp_hint') + '</p></div>';
+      return;
+    }
+    const rec = computeRecommendation(pr);
+    const rows = rec.keys.map((k, i) =>
+      '<div class="ledger-row"><div class="left">' +
+        '<span class="dot" style="background:var(--' + chipColors[i % chipColors.length] + ');color:var(--' + chipColors[i % chipColors.length] + ')"></span>' +
+        '<span class="lbl">' + tr('prof_part_' + k) + '</span>' +
+        '<span class="frac">' + rec.combo[i] + '/10</span>' +
+      '</div><span class="amt">' + tr('prof_part_pct').replace('{p}', rec.pct[i]) + '</span></div>'
+    ).join('');
+    const why = tr('prof_res_why').replace('{n}', rec.whyN).replace('{w}', rec.whyW).replace('{s}', rec.whyS);
+    els.recBlock.innerHTML =
+      '<div class="card hero">' +
+        '<div class="block-title">' + tr('prof_res_title') + '</div>' +
+        '<p class="prof-help">' + tr('prof_res_intro') + '</p>' +
+        rows +
+        (rec.over > 0 ? '<p class="prof-warn">' + tr('prof_res_over').replace('{o}', fmt(rec.over)) + '</p>' : '') +
+        '<button type="button" class="btn-primary" id="recUse">' + tr('prof_use') + '</button>' +
+        '<p class="prof-why">' + why + '</p>' +
+        (rec.hasBuffer ? '<p class="prof-why">' + tr('prof_res_buffer').replace('{b}', fmt(rec.free)) + '</p>' : '') +
+        '<div class="prof-links"><button type="button" class="reset-btn ghost" id="recManual">' + tr('prof_manual') + '</button></div>' +
+        '<p class="prof-note">' + tr('prof_note') + '</p>' +
+      '</div>';
+  }
+  els.recBlock.addEventListener('click', (e) => {
+    const btn = e.target.closest ? e.target.closest('button') : null;
+    if(!btn) return;
+    if(btn.id === 'recManual'){ state.profile = { skipped:true }; save(); renderHome(); return; }
+    if(btn.id !== 'recUse') return;
+    const pr = budgetProfile();
+    if(!pr) return;
+    const tot = state.totalCents;
+    if(tot === null || isNaN(tot) || tot <= 0){
+      flagFields([{ el: els.inpTotal, valid:false }]);
+      showToast(tr('prof_res_need_total'));
+      els.inpTotal.focus({ preventScroll:true });
+      els.inpTotal.scrollIntoView({ block:'center', behavior:'smooth' });   // centré : jamais caché par la barre flottante
+      return;
+    }
+    const rec = computeRecommendation(pr);
+    const scale = state.base === 100 ? 10 : 1;
+    state.combo = rec.combo.map(v => v * scale);
+    state.labels = rec.keys.map(k => tr('prof_part_' + k));
+    save(); renderHome();
+  });
+
+  function renderProfileBlock(){
+    const mode = profileMode();
+    els.profileBlock.style.display = mode === 'none' ? 'none' : 'block';
+    if(mode === 'none'){
+      els.profileBlock.innerHTML = ''; plannerKey = '';
+      els.recBlock.style.display = 'none'; els.recBlock.innerHTML = '';
+    } else {
+      if(mode === 'edit'){ els.setupBlock.style.display = 'none'; els.finalBlock.style.display = 'none'; }
+      const key = state.settings.lang + '|' + state.settings.currency + '|' + mode;
+      if(plannerKey !== key || !els.profileBlock.firstChild) renderPlanner(mode); else renderRecommendation();
+    }
+    if(activeTab === 'home') els.pageSubtitle.textContent = tr(mode === 'none' ? 'sub_home' : 'bp_intro');
+  }
+  // Paramètres → « Modifier » : rouvre le planificateur de budget
+  els.profileRedoBtn.addEventListener('click', () => {
+    if(state.profile && state.profile.skipped) state.profile = null;
+    editingBudget = !!(state.finalized || state.combo);
+    save(); setTab('home'); renderHome(); window.scrollTo(0, 0);
+  });
+
   function renderHome(){
     els.totalSuffix.textContent = currencySymbols[state.settings.currency] || '€';
     els.btn10.classList.toggle('active', state.base===10);
     els.btn100.classList.toggle('active', state.base===100);
     if(document.activeElement !== els.inpTotal) els.inpTotal.value = state.totalCents !== null ? fmtNum(state.totalCents) : '';
     renderCombos(); renderAssign(); renderFinal(); renderPrevRepartitions();
+    renderProfileBlock();
   }
   els.inpTotal.addEventListener('input', () => {
     const v = els.inpTotal.value;
@@ -1816,7 +2200,7 @@
     applyI18n();
   }
   els.langToggle.querySelectorAll('button').forEach(btn => {
-    btn.addEventListener('click', () => { state.settings.lang = btn.dataset.lang; save(); applyI18n(); renderHome(); renderGoal(); renderHistory(); renderProfile(); renderJar(); });
+    btn.addEventListener('click', () => { state.settings.lang = btn.dataset.lang; save(); applyI18n(); renderHome(); renderGoal(); renderHistory(); renderProfile(); });
   });
   els.currencySelect.addEventListener('change', () => {
     state.settings.currency = els.currencySelect.value; save(); renderHome(); renderGoal(); renderHistory(); renderProfile();
@@ -1862,7 +2246,7 @@
           state = Object.assign({
             totalCents:null, base:10, combo:null, labels:null, finalized:false, repartitions:[],
             goals:[], totalAssociatedToGoals:0, associationLog:[],
-            expenses:[], chat:{ messages:[] }, account:{ name:'', photo:null }, jarCoins:0, onboardingSeen:false,
+            expenses:[], chat:{ messages:[] }, account:{ name:'', photo:null }, profile:null, budget:null, onboardingSeen:false,
             settings:{ lang:detectDeviceLang(), currency:'EUR', theme:'dark', notifications:false }
           }, parsed);
           state.expenses = state.expenses || [];
@@ -1870,7 +2254,6 @@
           state.repartitions = state.repartitions || [];
           state.repartitions.forEach(r => { if(r.id === undefined) r.id = nextRepId++; });
           nextRepId = state.repartitions.reduce((m,r) => Math.max(m, r.id || 0), 0) + 1;
-          state.jarCoins = state.jarCoins || 0;
           state.account = Object.assign({ name:'', photo:null }, state.account || {});
           state.settings = Object.assign({ lang:detectDeviceLang(), currency:'EUR', theme:'dark', notifications:false }, state.settings || {});
           nextExpId = state.expenses.reduce((m,e)=>Math.max(m,e.id),0) + 1;
@@ -1894,7 +2277,6 @@
     }catch(e){ console.error('Erreur de lecture locale', e); }
     applyTheme();
     applyI18n();
-    renderJar();
     els.appRoot.style.display = 'block';
     renderHome();
     runSplash();
